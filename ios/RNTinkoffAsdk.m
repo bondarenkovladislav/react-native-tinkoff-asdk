@@ -307,8 +307,8 @@ RCT_EXPORT_METHOD(ApplePay:(NSDictionary*) options
       email: [options objectForKey:@"email"]
       appleMerchantId: [options objectForKey:@"appleMerchantId"]
       shippingMethods:nil
-      shippingContact:shippingContact
-      shippingEditableFields:PKAddressFieldPostalAddress|PKAddressFieldName|PKAddressFieldEmail|PKAddressFieldPhone //PKAddressFieldNone
+      shippingContact:nil
+      shippingEditableFields:PKAddressFieldNone
       recurrent: NO
       additionalPaymentData: [options objectForKey:@"extraData"]
       receiptData: receiptData
