@@ -84,12 +84,12 @@ RCT_EXPORT_METHOD(init:(NSDictionary *)options resolve:(RCTPromiseResolveBlock)r
   NSString *password = [RCTConvert NSString:options[@"password"]];
   NSString *publicKey = [RCTConvert NSString:options[@"publicKey"]];
 
-	ASDKStringKeyCreator *stringKeyCreator = [[ASDKStringKeyCreator alloc] initWithPublicKeyString:publicKey];
+    ASDKStringKeyCreator *stringKeyCreator = [[ASDKStringKeyCreator alloc] initWithPublicKeyString:publicKey];
 
-	acquiringSdk = [ASDKAcquiringSdk acquiringSdkWithTerminalKey:terminalKey
+    acquiringSdk = [ASDKAcquiringSdk acquiringSdkWithTerminalKey:terminalKey
                                  payType:nil
-																 password:password
-															   publicKeyDataSource:stringKeyCreator];
+                                                                 password:password
+                                                               publicKeyDataSource:stringKeyCreator];
 
   bool isTestMode = false;
   bool isDebugLog = false;
@@ -246,7 +246,16 @@ RCT_EXPORT_METHOD(Pay:(NSDictionary*) options
       receiptData: receiptData
       //receiptData:nil
       //success:^(NSNumber *paymentId) { NSLog(@"%@",paymentId); resolve(paymentId); }
-      success: ^(ASDKPaymentInfo *paymentInfo) { NSLog(@"%@",paymentInfo); resolve(paymentInfo); }
+      success: ^(ASDKPaymentInfo *paymentInfo) {
+        NSLog(@"%@",paymentInfo);
+        NSDictionary *dictRes = @{
+            @"amount": paymentInfo.amount,
+            @"status": paymentInfo.status,
+            @"order_id": paymentInfo.orderId,
+            @"payment_id": paymentInfo.paymentId
+        };
+        resolve(dictRes);
+      }
       cancelled: ^{ NSLog(@"cancelled"); reject(@"payment_cancelled", @"Платеж отменен", error); }
       error: ^(ASDKAcquringSdkError *error) {
           NSLog(@"%@",error);
@@ -271,22 +280,22 @@ RCT_EXPORT_METHOD(ApplePay:(NSDictionary*) options
 
     NSDictionary *shipping = [options objectForKey:@"Shipping"];
 
-		PKContact *shippingContact = [[PKContact alloc] init];
-		shippingContact.emailAddress = [options objectForKey:@"Email"];
-		shippingContact.phoneNumber = [CNPhoneNumber phoneNumberWithStringValue:[options objectForKey:@"Phone"]];
+        PKContact *shippingContact = [[PKContact alloc] init];
+        shippingContact.emailAddress = [options objectForKey:@"Email"];
+        shippingContact.phoneNumber = [CNPhoneNumber phoneNumberWithStringValue:[options objectForKey:@"Phone"]];
 
     NSPersonNameComponents *name = [[NSPersonNameComponents alloc] init];
     name.givenName = [shipping objectForKey:@"givenName"];
     name.familyName = [shipping objectForKey:@"familyName"];
     shippingContact.name = name;
 
-		CNMutablePostalAddress *postalAddress = [[CNMutablePostalAddress alloc] init];
-		[postalAddress setStreet:[shipping objectForKey:@"Street"]];
-		[postalAddress setCountry:[shipping objectForKey:@"Country"]];
-		[postalAddress setCity:[shipping objectForKey:@"City"]];
-		[postalAddress setPostalCode:[shipping objectForKey:@"PostalCode"]];
-		[postalAddress setISOCountryCode:[shipping objectForKey:@"ISOCountryCode"]];
-		shippingContact.postalAddress = [postalAddress copy];
+        CNMutablePostalAddress *postalAddress = [[CNMutablePostalAddress alloc] init];
+        [postalAddress setStreet:[shipping objectForKey:@"Street"]];
+        [postalAddress setCountry:[shipping objectForKey:@"Country"]];
+        [postalAddress setCity:[shipping objectForKey:@"City"]];
+        [postalAddress setPostalCode:[shipping objectForKey:@"PostalCode"]];
+        [postalAddress setISOCountryCode:[shipping objectForKey:@"ISOCountryCode"]];
+        shippingContact.postalAddress = [postalAddress copy];
 
     NSNumber *amountCents = [options objectForKey:@"Amount"];
     double amountRub = (amountCents.doubleValue / 100);
@@ -314,8 +323,16 @@ RCT_EXPORT_METHOD(ApplePay:(NSDictionary*) options
       receiptData: receiptData
       shopsData:nil
       shopsReceiptsData:nil
-      success: ^(ASDKPaymentInfo *paymentInfo) { NSLog(@"%@",paymentInfo); resolve(paymentInfo); }
-      cancelled: ^{ reject(@"payment_cancelled", @"Платеж отменен", error); }
+      success: ^(ASDKPaymentInfo *paymentInfo) { NSLog(@"%@",paymentInfo);
+        NSDictionary *dictRes = @{
+            @"amount": paymentInfo.amount,
+            @"status": paymentInfo.status,
+            @"order_id": paymentInfo.orderId,
+            @"payment_id": paymentInfo.paymentId
+        };
+        resolve(dictRes);
+    }
+      cancelled: ^{ reject(@"payment_cancelled", @"Платеж отменен 1", error); }
       error: ^(ASDKAcquringSdkError *error) { NSLog(@"%@",error); reject([NSString stringWithFormat:@"%ld", [error code]], [error errorMessage], error); }
     ];
 }
