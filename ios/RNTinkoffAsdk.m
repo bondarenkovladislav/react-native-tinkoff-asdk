@@ -230,7 +230,7 @@ RCT_EXPORT_METHOD(Pay:(NSDictionary*) options
                                   @"Phone": [options objectForKey:@"Phone"]};
 
     //NSLog(@"%@",receiptData);
-    //NSLog(@"%@",additionalPaymentData);
+//    NSLog(@"%@",additionalPaymentData);
 
     [form presentPaymentFormFromViewController:rootViewController
       orderId: [options objectForKey:@"OrderID"]
@@ -242,7 +242,8 @@ RCT_EXPORT_METHOD(Pay:(NSDictionary*) options
       customerKey: [options objectForKey:@"CustomerKey"]
       recurrent: [options objectForKey:@"IsRecurrent"]
       makeCharge: [options objectForKey:@"MakeCharge"]
-      additionalPaymentData: additionalPaymentData
+//      additionalPaymentData: additionalPaymentData
+      additionalPaymentData: [options objectForKey:@"extraData"]
       receiptData: receiptData
       //receiptData:nil
       //success:^(NSNumber *paymentId) { NSLog(@"%@",paymentId); resolve(paymentId); }
