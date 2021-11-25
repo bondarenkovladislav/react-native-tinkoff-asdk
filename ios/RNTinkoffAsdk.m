@@ -333,7 +333,7 @@ RCT_EXPORT_METHOD(ApplePay:(NSDictionary*) options
         };
         resolve(dictRes);
     }
-      cancelled: ^{ reject(@"payment_cancelled", @"Платеж отменен 1", error); }
+      cancelled: ^{ reject(@"payment_cancelled", @"Платеж отменен", error); }
       error: ^(ASDKAcquringSdkError *error) { NSLog(@"%@",error); reject([NSString stringWithFormat:@"%ld", [error code]], [error errorMessage], error); }
     ];
 }
